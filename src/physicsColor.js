@@ -1,20 +1,40 @@
-// Matter.js module aliases
-var Matter = require('matter-js');
-
 var Engine = Matter.Engine,
     World = Matter.World,
     Bodies = Matter.Bodies;
 
-// create a Matter.js engine
 var engine = Engine.create(document.body);
-
-// create two boxes and a ground
-var boxA = Bodies.rectangle(400, 200, 80, 80);
-var boxB = Bodies.rectangle(450, 50, 80, 80);
 var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
+var circles = [];
 
-// add all of the bodies to the world
-World.add(engine.world, [boxA, boxB, ground]);
+var worldWidth = 800;
+var worldHeight = 600;
 
-// run the engine
+var startRadius = 1;
+var radiusRate = 20;
+var numCircles = 100;
+var spiralRate = 12;
+
+function generateSpiral(numCircles, spiralRate, radiusRate) {
+	var numRotations = 4;
+	var totalRotation = 2 * Math.PI * numRotations;
+
+	for (var i = 0; i < numCircles; i++) {
+		var t = (i / numCircles) * totalRotation;
+		var x =  spiralRate * t * Math.cos(t);
+		var y =  spiralRate * t * Math.sin(t);
+		var thisRadius = startRadius + radiusRate * (i / numCircles); 
+
+		x += worldWidth / 2;
+		y += worldHeight / 2;
+
+		circles.push( Bodies.circle(x, y, thisRadius, {isStatic: true}) );
+	}
+	console.log(circles);
+}
+
+console.log(ground);
+
+generateSpiral(numCircles, spiralRate, radiusRate);
+World.add(engine.world, [ground]);
+World.add(engine.world, circles);
 Engine.run(engine);
