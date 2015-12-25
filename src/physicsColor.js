@@ -1,4 +1,4 @@
-var ColorMap = JSON.parse(ColorMapData);
+var cmap = require('colormap');
 
 var Engine = Matter.Engine,
     World = Matter.World,
@@ -10,10 +10,15 @@ var worldWidth = 800;
 var worldHeight = 600;
 var xCenter = worldWidth / 2;
 var yCenter = worldHeight / 2;
+var numShades = 72;
 
-var maxColorValue = 48;
-var myColorMap = ColorMap.jet;
-var maxDistance = Math.sqrt(worldWidth*worldWidth + worldHeight*worldHeight);
+var myColorMap = cmap({
+	colormap: 'jet', 
+	nshades: numShades,
+	format: 'hex'
+});
+
+var maxDistance = Math.sqrt(xCenter*xCenter + yCenter*yCenter);
 
 var renderObject = {
 	options: {
@@ -42,10 +47,11 @@ var radiusRate = 20;
 var numCircles = 80;
 var spiralRate = 11;
 
-var pinballRadius = 10;
+var pinballRadius = 5;
 
-var velocityVector = {
-	x: 1,
+var speed = 5;
+var startVelocity = {
+	x: speed,
 	y: 0
 };
 
@@ -82,13 +88,12 @@ var pinballParams = {
  };
 
 var pinball = Bodies.circle(100, 100, pinballRadius, pinballParams);
-Body.setVelocity(pinball, velocityVector);
+Body.setVelocity(pinball, startVelocity);
 
 generateSpiral(numCircles, spiralRate, radiusRate);
 generateBounds();
 
 World.add(engine.world, [pinball]);
-console.log(pinball);
 World.add(engine.world, circles);
 World.add(engine.world, bounds);
 
@@ -97,22 +102,21 @@ Engine.run(engine);
 
 //artificially maintain velocity
 setInterval(function() {
-	var scaleFactor = 1 / pinball.speed;
+	var scaleFactor = speed / pinball.speed;
 	var newVector = {
 		x: pinball.velocity.x * scaleFactor, 
 		y: pinball.velocity.y * scaleFactor
 	};
 
 	Body.setVelocity(pinball, newVector);
+	var dx = pinball.position.x - xCenter;
+	var dy = pinball.position.y - yCenter;
+	var distance = Math.sqrt(dx*dx + dy*dy);
+	var colorVal = parseInt((distance / maxDistance) * numShades);
+
+	pinball.render.fillStyle = myColorMap[colorVal];
 	
 }, 10);
-
-setInterval(function() {
-	var distance = Math.sqrt(pinball.position.x * pinball.position.x +
-				   			 pinball.position.y * pinball.position.y);
-	var colorInt = parseInt((distance / maxDistance) * maxColorValue);
-	pinball.render.fillStyle = myColorMap[colorInt];
-}, 200);
 
 
 function generateSpiral(numCircles, spiralRate, radiusRate) {
