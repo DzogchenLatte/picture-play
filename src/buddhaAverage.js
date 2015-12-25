@@ -5,7 +5,7 @@ var height;
 
 //fileName is the image file with the .jpg extension
 function averagePicture(fileName) {
-	Jimp.read('./' + fileName + '.jpg', function(error, image) {
+	Jimp.read('img/' + fileName + '.jpg', function(error, image) {
 		if (error) throw error;
 
 		width = image.bitmap.width;
