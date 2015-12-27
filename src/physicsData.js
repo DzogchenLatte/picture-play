@@ -1,4 +1,3 @@
-var cmap = require('colormap');
 
 var Engine = Matter.Engine,
     World = Matter.World,
@@ -10,7 +9,14 @@ var worldWidth = 800;
 var worldHeight = 600;
 var xCenter = worldWidth / 2;
 var yCenter = worldHeight / 2;
+
+var imageSize = 8;
 var numShades = 72;
+
+var timeLimit = 5000;
+var trialDelay = 1000;
+
+var intervalId;
 
 var myColorMap = cmap({
 	colormap: 'jet', 
@@ -47,13 +53,10 @@ var radiusRate = 20;
 var numCircles = 80;
 var spiralRate = 11;
 
-var pinballRadius = 5;
+var pinballRadius = 6;
+var pinballSpeed = 5;
 
-var speed = 5;
-var startVelocity = {
-	x: speed,
-	y: 0
-};
+var simulationCounter = 0;
 
 var origin = {
 	x: 0,
@@ -84,40 +87,18 @@ var pinballParams = {
  		fillStyle: "#000000",
  		strokeStyle: '#000000'
  	}
-
  };
 
-var pinball = Bodies.circle(100, 100, pinballRadius, pinballParams);
-Body.setVelocity(pinball, startVelocity);
+ var xPinballStart = xCenter;
+ var yPinballStart = yCenter;
+
+var pinball = Bodies.circle(xPinballStart, yPinballStart, pinballRadius, pinballParams);
 
 generateSpiral(numCircles, spiralRate, radiusRate);
 generateBounds();
-
 World.add(engine.world, [pinball]);
 World.add(engine.world, circles);
 World.add(engine.world, bounds);
-
-engine.world.gravity.y = 0;
-Engine.run(engine);
-
-//artificially maintain velocity
-setInterval(function() {
-	var scaleFactor = speed / pinball.speed;
-	var newVector = {
-		x: pinball.velocity.x * scaleFactor, 
-		y: pinball.velocity.y * scaleFactor
-	};
-
-	Body.setVelocity(pinball, newVector);
-	var dx = pinball.position.x - xCenter;
-	var dy = pinball.position.y - yCenter;
-	var distance = Math.sqrt(dx*dx + dy*dy);
-	var colorVal = parseInt((distance / maxDistance) * numShades);
-
-	pinball.render.fillStyle = myColorMap[colorVal];
-	
-}, 10);
-
 
 function generateSpiral(numCircles, spiralRate, radiusRate) {
 	var numRotations = 4;
@@ -163,12 +144,3 @@ function generateBounds() {
 		bounds.push( Bodies.circle(x, y, boundRadius, staticParams));
 	}
 }
-
-
-//for some reason, "top" === Window...not sure how that conflict arose or persisted
-// var bottom = Bodies.rectangle(xCenter, worldHeight, worldWidth, 10, staticParams);
-// var left = Bodies.rectangle(0, yCenter, 10, worldHeight, staticParams);
-// var topBound = Bodies.rectangle(xCenter, 0, worldWidth, 10, staticParams);
-// var right = Bodies.rectangle(worldWidth, yCenter, 10, worldHeight, staticParams);
-// World.add(engine.world, [left, bottom, right, topBound]);
-
