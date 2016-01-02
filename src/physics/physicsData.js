@@ -10,13 +10,18 @@ var worldHeight = 600;
 var xCenter = worldWidth / 2;
 var yCenter = worldHeight / 2;
 
-var imageSize = 20;
+var imageSize = 40;
 var canvasLineWidth = 10;
-var imageCanvasSize = 400;
-var numShades = 72;
+var canvasCurrentcolor;
+var canvasImageSize = 400;
+var numShades = 128;
 
 var timeLimit = 5000;
 var trialDelay = 1000;
+
+//how many ms have elapsed in the current trial
+var currentTrialTime = 0;
+var trialStartTime;
 
 var intervalId;
 
@@ -96,7 +101,7 @@ var pinballParams = {
 
 var pinball = Bodies.circle(xPinballStart, yPinballStart, pinballRadius, pinballParams);
 
-generateSpiral(numCircles, spiralRate, radiusRate);
+// generateSpiral(numCircles, spiralRate, radiusRate);
 generateBounds();
 World.add(engine.world, [pinball]);
 World.add(engine.world, circles);

@@ -8,6 +8,8 @@ function updatePinball() {
 
 	Body.setVelocity(pinball, newVector);
 	setPinballColor();
+	currentTrialTime = (new Date()).getTime() - trialStartTime;
+	drawLine();
 } 
 
 function setPinballColor() {
@@ -16,6 +18,7 @@ function setPinballColor() {
 	var distance = Math.sqrt(dx*dx + dy*dy);
 	var colorVal = parseInt((distance / maxDistance) * numShades);
 
+	canvasCurrentColor = myColorMap[colorVal];
 	pinball.render.fillStyle = myColorMap[colorVal];
 }
 
@@ -25,6 +28,8 @@ function prepareNextRun() {
 		console.log('simulation complete');
 		return;
 	}
+
+	trialStartTime = (new Date()).getTime();
 	intervalId = setInterval(updatePinball, 10);
 
 	var angle = (simulationCounter / imageSize ) * (2 * Math.PI);
@@ -45,6 +50,7 @@ function prepareNextRun() {
 function resetPinball() {
 	World.remove(engine.world, pinball);
 	pinball = Bodies.circle(xPinballStart, yPinballStart, pinballRadius, pinballParams);
+	xLastDraw = 0;
 	
 	Body.setVelocity(pinball, {x: 0, y: 0});
 	setPinballColor();
