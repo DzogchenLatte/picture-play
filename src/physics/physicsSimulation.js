@@ -46,7 +46,7 @@ function resetPinball() {
 	World.remove(engine.world, pinball);
 	pinball = Bodies.circle(xPinballStart, yPinballStart, pinballRadius, pinballParams);
 	
-	Body.setVelocity(pinball, {x: .01, y: 0.01});
+	Body.setVelocity(pinball, {x: 0, y: 0});
 	setPinballColor();
 	World.add(engine.world, [pinball]);
 	

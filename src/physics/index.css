@@ -1,0 +1,13 @@
+#physicsContainer {
+	display: inline-block;
+	position: absolute;
+	width: 1500px;
+}
+
+canvas {
+	margin: 10px;
+	border: solid;
+	border-width: 1px;
+	position: relative;
+	display: inline-block;
+}

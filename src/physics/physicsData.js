@@ -10,7 +10,9 @@ var worldHeight = 600;
 var xCenter = worldWidth / 2;
 var yCenter = worldHeight / 2;
 
-var imageSize = 8;
+var imageSize = 20;
+var canvasLineWidth = 10;
+var imageCanvasSize = 400;
 var numShades = 72;
 
 var timeLimit = 5000;
@@ -35,7 +37,7 @@ var renderObject = {
 	}
 };
 
-var engine = Engine.create(document.body, {
+var engine = Engine.create(document.getElementById('physicsContainer'), {
 	render: renderObject,
 	velocityIterations: 10
 });
